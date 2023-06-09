@@ -21,8 +21,14 @@ glob.sync('./tasks/**/*.ts').forEach(function (file: any) {
   require(resolve(file));
 });
 
-const config: HardhatUserConfig = {
+const config: any = {
   defaultNetwork: "mumbai",
+  etherscan: {
+    apiKey: {
+      polygonMumbai: process.env.POLYGONSCAN_API_KEY,
+      polygon: process.env.POLYGONSCAN_API_KEY
+    }
+  },
   networks: {
     hardhat: {
       allowUnlimitedContractSize: true,
