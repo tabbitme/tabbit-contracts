@@ -14,7 +14,7 @@ contract GiftCardExtended is ERC721URIStorage {
 
     event minted(uint256);
 
-    constructor() ERC721("GiftCard", "GCA") {
+    constructor() ERC721("GiftCard", "GIPT") {
         _registry = new ERC6551Registry();
     }
 
