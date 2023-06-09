@@ -22,22 +22,13 @@ glob.sync('./tasks/**/*.ts').forEach(function (file: any) {
 });
 
 const config: HardhatUserConfig = {
-  defaultNetwork: "matic",
-  etherscan: {
-    apiKey: {
-      goerli: ETHERSCAN_API_KEY ?? "",
-      polygon: POLYGONSCAN_API_KEY ?? "",
-      polygonMumbai: POLYGONSCAN_API_KEY ?? "",
-    },
-  },
+  defaultNetwork: "mumbai",
   networks: {
     hardhat: {
       allowUnlimitedContractSize: true,
       forking: {
         url: `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_ID}`
        // blockNumber: 7704180
-       
-      
       },
     },
     localhost: {
@@ -50,6 +41,14 @@ const config: HardhatUserConfig = {
       gasPrice: 1000000000,
       url: `https://eth-goerli.api.onfinality.io/public`,
     },
+    astar: {
+      url: "https://1rpc.io/astr",
+      chainId: 592,
+      gasPrice: "auto",
+      gasMultiplier: 2,
+      accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
+
+    },
     polygon: {
       chainId: 137,
       accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
@@ -61,6 +60,7 @@ const config: HardhatUserConfig = {
       gasPrice: 10000000000,
       accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
     },
+    
   },
 
   solidity: {
