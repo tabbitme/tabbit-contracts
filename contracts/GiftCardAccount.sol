@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/interfaces/IERC1271.sol";
 import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
-import "@0xsequence/sstore2/contracts/utils/Bytecode.sol";
+import "./utils/Bytecode.sol";
 
 import "./interfaces/IERC6551Account.sol";
 import "./libs/ERC6551AccountLib.sol";
