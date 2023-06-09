@@ -1,4 +1,4 @@
-# ERC6551 GiftCard
+# ERC6551 GiftCard contracts
 ERC6551 GiftCard contracts that allows users to mint, load balance and reemed git cards.
 
 ## Features
@@ -56,27 +56,6 @@ Here, you need to create instances of the registry, the account, and the ERC-721
     deployedAccountTx = await erc6551Registry.createAccount(giftCardAccount.address, chainId, giftCard.address, tokenId, salt, "0x");
 ```
 
-* **GiftCardExtended.sol** 
-In this approach, it's only necessary to create an NFT contract and call the `mint` function sending in the `value` of the amount you want to load in the gift card. After that, it will be possible to redeem it. Simple to implement but less flexible.
-
-```solidity
-    GiftCard = await ethers.getContractFactory("GiftCardExtended");
-    giftCard = await GiftCard.deploy();
-    await giftCard.deployed();
-    const initialBalance = await owner.getBalance();
-      const tokenURI = "[INSERT THE IMAGE ADDRESS HERE]";
-      let amount = ethers.utils.parseEther("1.0");
-      
-      // Mint a new gift card
-      await giftCard.mint(addr1.address, tokenURI, {value: amount});
-
-      // Check that the Ether was transferred
-      const finalBalance = await owner.getBalance();
-      expect(finalBalance).to.be.below(initialBalance);
-      const newOwnerBalance = await giftCard.balanceOf(addr1.address);
-      expect(newOwnerBalance).to.be.equal(1);
-```
-
 ## Run the code
 
 * The code is configured to be deployed in Mumbai (Testnet). You can find a faucet [here](https://mumbaifaucet.com/)
@@ -106,10 +85,6 @@ npx hardhat test
 #### Deploy Contracts for the GitfCard Approach
 ```shell
 npx hardhat run --network mumbai scripts/deployGiftCard.js
-```
-#### Deploy Contracts for the GitfCardExtended Approach
-```shell
-npx hardhat run --network mumbai ./scripts/deployGiftCardExtended.js
 ```
 
 ## Todos
