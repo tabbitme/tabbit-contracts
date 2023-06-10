@@ -3,7 +3,7 @@ import { HardhatUserConfig } from "hardhat/config";
 // PLUGINS
 import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-ethers";
-import "@nomiclabs/hardhat-etherscan";
+import "@librax/hardhat-etherscan";
 import { resolve} from 'path';
 import * as glob from 'glob';
 require('hardhat-contract-sizer');
@@ -15,7 +15,6 @@ dotenv.config({ path: __dirname + "/.env" });
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const ALCHEMY_ID = process.env.ALCHEMY_ID;
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
-const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY;
 
 glob.sync('./tasks/**/*.ts').forEach(function (file: any) {
   require(resolve(file));
@@ -26,7 +25,8 @@ const config: any = {
   etherscan: {
     apiKey: {
       polygonMumbai: process.env.POLYGONSCAN_API_KEY,
-      polygon: process.env.POLYGONSCAN_API_KEY
+      polygon: process.env.POLYGONSCAN_API_KEY,
+      astar: process.env.ASTARSCAN_API_KEY
     }
   },
   networks: {
@@ -48,12 +48,9 @@ const config: any = {
       url: `https://eth-goerli.api.onfinality.io/public`,
     },
     astar: {
-      url: "https://1rpc.io/astr",
+      url: "https://evm.astar.network",
       chainId: 592,
-      gasPrice: "auto",
-      gasMultiplier: 2,
       accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
-
     },
     polygon: {
       chainId: 137,
