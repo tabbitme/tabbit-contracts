@@ -11,6 +11,8 @@
     "@nomiclabs/hardhat-etherscan": "^3.1.7",
     "@nomiclabs/hardhat-waffle": "^2.0.6",
     "@openzeppelin/contracts": "^4.9.0",
+    "@thirdweb-dev/contracts": "^3.5.6",
+    "@erc6551/reference": "github:erc6551/reference",
     "dotenv": "^16.0.3",
     "hardhat-contract-sizer": "^2.9.0"
   }
