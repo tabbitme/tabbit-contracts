@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.13;
 
-import "../utils/UserOperation.sol";
+import "../smart-wallet/utils/UserOperation.sol";
 
 /**
  * Aggregated Signatures validator.

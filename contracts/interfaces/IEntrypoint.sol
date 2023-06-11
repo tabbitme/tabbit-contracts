@@ -9,7 +9,7 @@ pragma solidity ^0.8.13;
 /* solhint-disable no-inline-assembly */
 /* solhint-disable reason-string */
 
-import "../utils/UserOperation.sol";
+import "../smart-wallet/utils/UserOperation.sol";
 import "./IStakeManager.sol";
 import "./IAggregator.sol";
 import "./INonceManager.sol";

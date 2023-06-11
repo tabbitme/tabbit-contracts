@@ -14,9 +14,9 @@ import "../../dynamic-contracts/extension/ContractMetadata.sol";
 import "../interfaces/IEntrypoint.sol";
 
 // Smart wallet implementation
-import { Account } from "./Account.sol";
+import "./Account.sol";
 
-contract AccountsFactory is BaseAccountFactory, ContractMetadata, PermissionsEnumerable {
+contract AccountFactory is BaseAccountFactory, ContractMetadata, PermissionsEnumerable {
     /*///////////////////////////////////////////////////////////////
                             Constructor
     //////////////////////////////////////////////////////////////*/
