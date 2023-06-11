@@ -23,7 +23,7 @@ async function main() {
   // erc6551Registry = await ERC6551Registry.deploy();
   // await erc6551Registry.deployed();
   // console.log("erc6551Registry contract deployed at:", erc6551Registry.address);
-  
+
   const entrypoint = "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789"
   const erc6551Registry = "0x02101dfB77FDE026414827Fdc604ddAF224F0921"
   TokenBoundAccount = await ethers.getContractFactory("TokenBoundAccount");
