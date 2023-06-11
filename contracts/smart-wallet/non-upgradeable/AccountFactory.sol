@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 // Utils
 import "../utils/BaseAccountFactory.sol";
@@ -16,7 +16,7 @@ import "../interfaces/IEntrypoint.sol";
 // Smart wallet implementation
 import { Account } from "./Account.sol";
 
-contract AccountFactory is BaseAccountFactory, ContractMetadata, PermissionsEnumerable {
+contract AccountsFactory is BaseAccountFactory, ContractMetadata, PermissionsEnumerable {
     /*///////////////////////////////////////////////////////////////
                             Constructor
     //////////////////////////////////////////////////////////////*/
