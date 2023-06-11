@@ -3,7 +3,7 @@
 
 pragma solidity ^0.8.0;
 
-import "../../../lib/TWStrings.sol";
+import "../../../libs/TWStrings.sol";
 
 /**
  * @dev Elliptic Curve Digital Signature Algorithm (ECDSA) operations.

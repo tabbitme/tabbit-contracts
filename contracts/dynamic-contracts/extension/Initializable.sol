@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache 2.0
 pragma solidity ^0.8.0;
 
-import "../../lib/TWAddress.sol";
+import "../../libs/TWAddress.sol";
 
 library InitStorage {
     /// @dev The location of the storage of the entrypoint contract's data.
