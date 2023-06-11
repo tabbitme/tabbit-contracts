@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import "./smart-wallet/non-upgradeable/Account.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "./openzeppelin-presets/token/ERC721/IERC721.sol";
 import "@erc6551/reference/src/lib/ERC6551AccountLib.sol";
 import "@erc6551/reference/src/interfaces/IERC6551Account.sol";
 
@@ -36,7 +36,7 @@ contract TokenBoundAccount is Account, IERC6551Account {
     /// @notice Returns whether a signer is authorized to perform transactions using the wallet.
     function isValidSigner(
         address _signer
-    ) public view override returns (bool) {
+    ) public view returns (bool) {
         return (owner() == _signer);
     }
 
