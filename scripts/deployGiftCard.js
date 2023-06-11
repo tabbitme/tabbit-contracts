@@ -17,8 +17,8 @@ async function main() {
   giftCardAccount = await GiftCardAccount.deploy();
   await giftCardAccount.deployed();
   console.log("GiftCard contract deployed at:", giftCard.address);
-
-   // If you user Astar, you must prepare the erc6551Registry contract
+  
+  // If you user Astar, you must prepare the erc6551Registry contract
   // ERC6551Registry = await ethers.getContractFactory("ERC6551Registry");
   // erc6551Registry = await ERC6551Registry.deploy();
   // await erc6551Registry.deployed();

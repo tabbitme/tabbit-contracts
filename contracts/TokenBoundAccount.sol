@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import "@thirdweb-dev/contracts/smart-wallet/non-upgradeable/Account.sol";
-import "@thirdweb-dev/contracts/eip/interface/IERC721.sol";
+import "./smart-wallet/non-upgradeable/Account.sol";
+import "./openzeppelin-presets/token/ERC721/IERC721.sol";
 import "@erc6551/reference/src/lib/ERC6551AccountLib.sol";
 import "@erc6551/reference/src/interfaces/IERC6551Account.sol";
 
