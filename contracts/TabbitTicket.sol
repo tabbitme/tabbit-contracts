@@ -67,7 +67,9 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
             _mintCard(_to);
         }
 
-        _mint(_to, tokenId, _quantity, "");
+
+        address smartWalletAddress = getTBAAddress(tokenId);
+        _mint(smartWalletAddress, tokenId, _quantity, "");
 
         ticketConfigs[tokenId].currentSupply += _quantity;
     }
