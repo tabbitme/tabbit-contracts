@@ -13,7 +13,7 @@ contract TabbitCard is ERC721URIStorage, Ownable, ReentrancyGuard {
 
     event minted(uint256);
 
-    constructor() ERC721("TabbitCard", "TBIT") {}
+    constructor() ERC721("TabbitCard", "TBCARD") {}
 
     function mintCard(address to, string memory tokenURI) external nonReentrant onlyAllowedContract {
         _safeMint(to, totalSupply);

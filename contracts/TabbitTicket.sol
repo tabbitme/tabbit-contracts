@@ -9,6 +9,10 @@ import "./interfaces/ITabbitCard.sol";
 import "./interfaces/IERC6551Registry.sol";
 
 contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
+
+    string public name = "TabbitTicket";
+    string public symbol = "TBTicket";
+
     uint256 public totalSupply;
 
     address public tabbitCardAddress;
