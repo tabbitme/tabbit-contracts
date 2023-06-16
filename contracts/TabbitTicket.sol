@@ -128,10 +128,6 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
     }
 
     function hasTBA(uint256 tokenId) public view returns (bool) {
-        require(
-            IERC721(tabbitCardAddress).ownerOf(tokenId) != address(0),
-            "TabbitTicket: Invalid tokenId."
-        );
         return _isCA(getTBAAddress(tokenId));
     }
 
