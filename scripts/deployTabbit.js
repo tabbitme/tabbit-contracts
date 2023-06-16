@@ -7,16 +7,15 @@
 const hre = require("hardhat");
 
 async function main() {
-  GiftCard = await ethers.getContractFactory("GiftCard");
-  console.log("@Gift1");
-  giftCard = await GiftCard.deploy();
-  console.log("@Gift11");
-  await giftCard.deployed();
-  console.log("@Gift2");
-  GiftCardAccount = await ethers.getContractFactory("GiftCardAccount");
-  giftCardAccount = await GiftCardAccount.deploy();
-  await giftCardAccount.deployed();
-  console.log("GiftCard contract deployed at:", giftCard.address);
+  TabbitCard = await ethers.getContractFactory("TabbitCard");
+  card = await TabbitCard.deploy();
+  await card.deployed();
+  console.log("TabbitCard Deployed at:", card.address);
+
+  TabbitTicket = await ethers.getContractFactory("TabbitTicket");
+  ticket = await TabbitTicket.deploy();
+  await ticket.deployed();
+  console.log("TabbitTicket deployed at:", ticket.address);
   
   // If you user Astar, you must prepare the erc6551Registry contract
   // ERC6551Registry = await ethers.getContractFactory("ERC6551Registry");
