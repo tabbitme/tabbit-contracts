@@ -40,7 +40,7 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
         uint256 _maxSupply,
         string memory _imageUri
     ) external {
-        TicketConfig({
+        ticketConfigs[totalSupply] = TicketConfig({
             admin: msg.sender,
             maxSupply: _maxSupply,
             currentSupply: 0,
