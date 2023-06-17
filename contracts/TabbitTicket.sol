@@ -18,7 +18,10 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
     address public tabbitCardAddress;
     address public registryAddress;
     address public implementationAddress;
+
     uint256 public chainId = 80001;
+
+    event TBACreated(address indexed account);
 
     struct TicketConfig {
         address admin;
@@ -76,13 +79,15 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
             uint256 cardId = ITabbitCard(tabbitCardAddress).getTotalSupply();
 
             _createTBA(cardId);
-            _mintCard(_to);
+            _mintCard(_to, ticketId);
 
             smartWalletAddress = getTBAAddress(cardId);
-            TBAAddresses[_to][msg.sender] = smartWalletAddress;
+            emit TBACreated(smartWalletAddress);
+            TBAAddresses[_to][msg.sender] = smartWalletAddress;            
         }
 
         _mint(smartWalletAddress, ticketId, _quantity, "");
+        // _safeTransferFrom(msg.sender, smartWalletAddress, ticketId, _quantity, "");
 
         ticketConfigs[ticketId].currentSupply += _quantity;
     }
@@ -94,12 +99,12 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
             tabbitCardAddress,
             cardId,
             0,
-            ""
+            bytes("")
         );
     }
 
-    function _mintCard(address _to) internal {
-        ITabbitCard(tabbitCardAddress).mintCard(_to);
+    function _mintCard(address _to, uint256 ticketId) internal {
+        ITabbitCard(tabbitCardAddress).mintCard(_to, ticketId);
     }
 
     modifier onlyTicketAdmin(uint256 ticketId) {
