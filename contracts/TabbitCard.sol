@@ -15,7 +15,7 @@ contract TabbitCard is ERC721, Ownable, ReentrancyGuard {
 
     string public baseImageURI = "https://tabbit.io/card/";
 
-    /// @dev Card Id to Ticket Id
+    /// @dev Ticket ID to Card ID
     mapping (uint256 => uint256) public ticketIds;
 
     /// @dev Ticket Owner Address to Card Image URI
@@ -24,13 +24,6 @@ contract TabbitCard is ERC721, Ownable, ReentrancyGuard {
     event minted(uint256);
 
     constructor() ERC721("TabbitCard", "TBCARD") {}
-
-    function createTabbitAccount(
-        
-    ) {
-
-    }
-
 
     function mintCard(address _to, uint256 _ticketId) external nonReentrant onlyAllowedContract {
         _safeMint(_to, totalSupply);
@@ -57,11 +50,15 @@ contract TabbitCard is ERC721, Ownable, ReentrancyGuard {
     }
 
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
-        return tokenURIs[getCardAdmin(ticketIds[tokenId])];
+        return tokenURIs[getCardAdmin(tokenId)];
     }
 
     function setBaseURI(string memory _baseURI) external {
         tokenURIs[msg.sender] = _baseURI;
+    }
+
+    function getTotalSupply() external view returns (uint256) {
+        return totalSupply;
     }
     
 }

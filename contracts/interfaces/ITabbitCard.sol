@@ -3,5 +3,7 @@
 pragma solidity ^0.8.19;
 
 interface ITabbitCard {
-    function mintCard(address to, string memory tokenURI) external;
+    function mintCard(address to) external;
+
+    function getTotalSupply() external view returns (uint256);
 }
