@@ -29,6 +29,8 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
 
     mapping(uint256 => TicketConfig) public ticketConfigs;
 
+    mapping (address => mapping (address => address)) public TBAAddresses;
+
     constructor() ERC1155("") {}
 
     function init(
@@ -58,88 +60,89 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
 
     /// @param _to via email address
     function issueTickets(
-        uint256 tokenId,
+        uint256 ticketId,
         address _to,
         uint256 _quantity
-    ) external nonReentrant onlyTicketAdmin(tokenId) {
+    ) external nonReentrant onlyTicketAdmin(ticketId) {
         require(
-            ticketConfigs[tokenId].currentSupply + _quantity <=
-                ticketConfigs[tokenId].maxSupply,
+            ticketConfigs[ticketId].currentSupply + _quantity <=
+                ticketConfigs[ticketId].maxSupply,
             "Exceeds max supply."
         );
 
-        if (!hasTBA(tokenId)) {
-            _createTBA(tokenId);
+        address smartWalletAddress = TBAAddresses[_to][msg.sender];
+
+        if (smartWalletAddress == address(0)) {
+            uint256 cardId = ITabbitCard(tabbitCardAddress).getTotalSupply();
+
+            _createTBA(cardId);
             _mintCard(_to);
+
+            smartWalletAddress = getTBAAddress(cardId);
+            TBAAddresses[_to][msg.sender] = smartWalletAddress;
         }
 
+        _mint(smartWalletAddress, ticketId, _quantity, "");
 
-        address smartWalletAddress = getTBAAddress(tokenId);
-        _mint(smartWalletAddress, tokenId, _quantity, "");
-
-        ticketConfigs[tokenId].currentSupply += _quantity;
+        ticketConfigs[ticketId].currentSupply += _quantity;
     }
 
-    function _createTBA(uint256 tokenId) internal {
+    function _createTBA(uint256 cardId) internal {
         IERC6551Registry(registryAddress).createAccount(
             implementationAddress,
-            80001,
+            chainId,
             tabbitCardAddress,
-            tokenId,
+            cardId,
             0,
             ""
         );
     }
 
     function _mintCard(address _to) internal {
-        ITabbitCard(tabbitCardAddress).mintCard(_to, "");
+        ITabbitCard(tabbitCardAddress).mintCard(_to);
     }
 
-    modifier onlyTicketAdmin(uint256 tokenId) {
+    modifier onlyTicketAdmin(uint256 ticketId) {
         require(
-            msg.sender == ticketConfigs[tokenId].admin,
+            msg.sender == ticketConfigs[ticketId].admin,
             "Only Ticket Admin can call this function."
         );
         _;
     }
 
     function uri(
-        uint256 tokenId
+        uint256 ticketId
     ) public view virtual override returns (string memory) {
-        string memory tokenURI = ticketConfigs[tokenId].imageUri;
+        string memory tokenURI = ticketConfigs[ticketId].imageUri;
         // If token URI is set, concatenate base URI and tokenURI (via abi.encodePacked).
-        return bytes(tokenURI).length > 0 ? tokenURI : super.uri(tokenId);
+        return bytes(tokenURI).length > 0 ? tokenURI : super.uri(ticketId);
     }
 
     function setTokenURI(
-        uint256 tokenId,
+        uint256 ticketId,
         string memory _tokenURI
-    ) external onlyTicketAdmin(tokenId) {
+    ) external onlyTicketAdmin(ticketId) {
         require(bytes(_tokenURI).length > 0, "TabbitTicket: Invalid URI.");
-        ticketConfigs[tokenId].imageUri = _tokenURI;
+        ticketConfigs[ticketId].imageUri = _tokenURI;
     }
 
-    function getTicketAdmin(uint256 tokenId) external view returns (address) {
-        return ticketConfigs[tokenId].admin;
+    function getTicketAdmin(uint256 ticketId) external view returns (address) {
+        return ticketConfigs[ticketId].admin;
     }
 
     function setBaseURI(string memory _baseURI) external onlyOwner {
         _setURI(_baseURI);
     }
 
-    function getTBAAddress(uint256 tokenId) public view returns (address) {
+    function getTBAAddress(uint256 cardId) public view returns (address) {
         return
             IERC6551Registry(registryAddress).account(
                 implementationAddress,
                 chainId,
                 tabbitCardAddress,
-                tokenId,
+                cardId,
                 0
             );
-    }
-
-    function hasTBA(uint256 tokenId) public view returns (bool) {
-        return isContractAddress(getTBAAddress(tokenId));
     }
 
     function isContractAddress(address addr) public view returns (bool) {
@@ -150,8 +153,4 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
         return size > 0;
     }
 
-    // modifier onlyTBAOwner() {
-    //     require(msg.sender == TBAOwner, "Only TBA Owner can call this function.");
-    //     _;
-    // }
 }
