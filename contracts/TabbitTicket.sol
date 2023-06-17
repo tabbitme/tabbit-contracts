@@ -18,6 +18,7 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
     address public tabbitCardAddress;
     address public registryAddress;
     address public implementationAddress;
+    uint256 public chainId = 80001;
 
     struct TicketConfig {
         address admin;
@@ -26,7 +27,7 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
         string imageUri;
     }
 
-    mapping(uint256 => TicketConfig) private ticketConfigs;
+    mapping(uint256 => TicketConfig) public ticketConfigs;
 
     constructor() ERC1155("") {}
 
@@ -44,6 +45,8 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
         uint256 _maxSupply,
         string memory _imageUri
     ) external {
+        totalSupply++;
+
         ticketConfigs[totalSupply] = TicketConfig({
             admin: msg.sender,
             maxSupply: _maxSupply,
@@ -51,7 +54,6 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
             imageUri: _imageUri
         });
 
-        totalSupply++;
     }
 
     /// @param _to via email address
@@ -117,6 +119,10 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
         ticketConfigs[tokenId].imageUri = _tokenURI;
     }
 
+    function getTicketAdmin(uint256 tokenId) external view returns (address) {
+        return ticketConfigs[tokenId].admin;
+    }
+
     function setBaseURI(string memory _baseURI) external onlyOwner {
         _setURI(_baseURI);
     }
@@ -125,20 +131,18 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
         return
             IERC6551Registry(registryAddress).account(
                 implementationAddress,
-                80001,
+                chainId,
                 tabbitCardAddress,
                 tokenId,
                 0
             );
-        //  == _to;
     }
 
     function hasTBA(uint256 tokenId) public view returns (bool) {
-        return _isCA(getTBAAddress(tokenId));
+        return isContractAddress(getTBAAddress(tokenId));
     }
 
-    /// @dev internal
-    function _isCA(address addr) public view returns (bool) {
+    function isContractAddress(address addr) public view returns (bool) {
         uint size;
         assembly {
             size := extcodesize(addr)
