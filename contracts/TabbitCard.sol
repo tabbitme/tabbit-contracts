@@ -13,7 +13,7 @@ contract TabbitCard is ERC721, Ownable, ReentrancyGuard {
 
     uint256 public totalSupply;
 
-    string public baseImageURI = "https://tabbit.io/card/";
+    string public baseImageURI = "https://tabbit.me/metadata/";
 
     /// @dev Ticket ID to Card ID
     mapping (uint256 => uint256) public ticketIds;

@@ -19,7 +19,7 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
     address public registryAddress;
     address public implementationAddress;
 
-    uint256 public chainId = 80001;
+    uint256 public chainId = 592;
 
     event TBACreated(address indexed account);
 
