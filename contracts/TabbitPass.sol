@@ -5,8 +5,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "./TabbitTicket.sol";
+import "./interfaces/ITabbitPass.sol";
 
-contract TabbitCard is ERC721, Ownable, ReentrancyGuard {
+contract TabbitPass is ITabbitPass, ERC721, Ownable, ReentrancyGuard {
 
     address public allowedContract;
     address public tabbitTicketAddress;
@@ -60,5 +61,7 @@ contract TabbitCard is ERC721, Ownable, ReentrancyGuard {
     function getTotalSupply() external view returns (uint256) {
         return totalSupply;
     }
+
     
+
 }

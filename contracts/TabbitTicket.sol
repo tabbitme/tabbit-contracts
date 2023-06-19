@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "./interfaces/ITabbitCard.sol";
+import "./interfaces/ITabbitPass.sol";
 import "./interfaces/IERC6551Registry.sol";
 
 contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
@@ -34,6 +34,8 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
 
     mapping (address => mapping (address => address)) public TBAAddresses;
 
+    mapping (address => uint256[]) public ticketIds;
+
     constructor() ERC1155("") {}
 
     function init(
@@ -50,8 +52,6 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
         uint256 _maxSupply,
         string memory _imageUri
     ) external {
-        totalSupply++;
-
         ticketConfigs[totalSupply] = TicketConfig({
             admin: msg.sender,
             maxSupply: _maxSupply,
@@ -59,6 +59,9 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
             imageUri: _imageUri
         });
 
+        ticketIds[msg.sender].push(totalSupply);
+
+        totalSupply++;
     }
 
     /// @param _to via email address
@@ -76,7 +79,7 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
         address smartWalletAddress = TBAAddresses[_to][msg.sender];
 
         if (smartWalletAddress == address(0)) {
-            uint256 cardId = ITabbitCard(tabbitCardAddress).getTotalSupply();
+            uint256 cardId = ITabbitPass(tabbitCardAddress).getTotalSupply();
 
             _createTBA(cardId);
             _mintCard(_to, ticketId);
@@ -87,7 +90,6 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
         }
 
         _mint(smartWalletAddress, ticketId, _quantity, "");
-        // _safeTransferFrom(msg.sender, smartWalletAddress, ticketId, _quantity, "");
 
         ticketConfigs[ticketId].currentSupply += _quantity;
     }
@@ -104,7 +106,7 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
     }
 
     function _mintCard(address _to, uint256 ticketId) internal {
-        ITabbitCard(tabbitCardAddress).mintCard(_to, ticketId);
+        ITabbitPass(tabbitCardAddress).mintCard(_to, ticketId);
     }
 
     modifier onlyTicketAdmin(uint256 ticketId) {
@@ -156,6 +158,10 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
             size := extcodesize(addr)
         }
         return size > 0;
+    }
+
+    function getTicketIds(address _ownerAddress) external view returns (uint256[] memory) {
+        return ticketIds[_ownerAddress];
     }
 
 }
