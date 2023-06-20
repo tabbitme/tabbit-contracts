@@ -5,21 +5,20 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/utils/Base64.sol";
 import "./interfaces/ITabbitPass.sol";
 import "./interfaces/IERC6551Registry.sol";
 
 contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
 
     string public name = "TabbitTicket";
-    string public symbol = "TBTicket";
+    string public symbol = "TTicket";
 
     uint256 public totalSupply;
 
     address public tabbitCardAddress;
     address public registryAddress;
     address public implementationAddress;
-
-    uint256 public chainId = 592;
 
     event TBACreated(address indexed account);
 
@@ -28,13 +27,15 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
         uint256 maxSupply;
         uint256 currentSupply;
         string imageUri;
+        string description;
+        string name;
     }
 
     mapping(uint256 => TicketConfig) public ticketConfigs;
 
-    mapping (address => mapping (address => address)) public TBAAddresses;
+    mapping(address => mapping(address => address)) public TBAAddresses;
 
-    mapping (address => uint256[]) public ticketIds;
+    mapping(address => uint256[]) public ticketIds;
 
     constructor() ERC1155("") {}
 
@@ -50,13 +51,17 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
 
     function createTicket(
         uint256 _maxSupply,
+        string memory _name,
+        string memory _description,
         string memory _imageUri
     ) external {
         ticketConfigs[totalSupply] = TicketConfig({
             admin: msg.sender,
             maxSupply: _maxSupply,
             currentSupply: 0,
-            imageUri: _imageUri
+            imageUri: _imageUri,
+            description: _description,
+            name: _name
         });
 
         ticketIds[msg.sender].push(totalSupply);
@@ -64,7 +69,7 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
         totalSupply++;
     }
 
-    /// @param _to via email address
+    /// @param _to email address
     function issueTickets(
         uint256 ticketId,
         address _to,
@@ -86,7 +91,7 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
 
             smartWalletAddress = getTBAAddress(cardId);
             emit TBACreated(smartWalletAddress);
-            TBAAddresses[_to][msg.sender] = smartWalletAddress;            
+            TBAAddresses[_to][msg.sender] = smartWalletAddress;
         }
 
         _mint(smartWalletAddress, ticketId, _quantity, "");
@@ -97,7 +102,7 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
     function _createTBA(uint256 cardId) internal {
         IERC6551Registry(registryAddress).createAccount(
             implementationAddress,
-            chainId,
+            block.chainid,
             tabbitCardAddress,
             cardId,
             0,
@@ -117,12 +122,26 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
         _;
     }
 
-    function uri(
-        uint256 ticketId
-    ) public view virtual override returns (string memory) {
-        string memory tokenURI = ticketConfigs[ticketId].imageUri;
-        // If token URI is set, concatenate base URI and tokenURI (via abi.encodePacked).
-        return bytes(tokenURI).length > 0 ? tokenURI : super.uri(ticketId);
+    function uri(uint256 tokenId) public view override returns (string memory) {
+        return
+            string(
+                abi.encodePacked(
+                    "data:application/json;base64,",
+                    Base64.encode(
+                        bytes(
+                            abi.encodePacked(
+                                '{"name":"',
+                                ticketConfigs[tokenId].name,
+                                '", "description": "',
+                                ticketConfigs[tokenId].description,
+                                '", "image" : "',
+                                ticketConfigs[tokenId].imageUri,
+                                "}"
+                            )
+                        )
+                    )
+                )
+            );
     }
 
     function setTokenURI(
@@ -145,7 +164,7 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
         return
             IERC6551Registry(registryAddress).account(
                 implementationAddress,
-                chainId,
+                block.chainid,
                 tabbitCardAddress,
                 cardId,
                 0
@@ -160,8 +179,9 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
         return size > 0;
     }
 
-    function getTicketIds(address _ownerAddress) external view returns (uint256[] memory) {
-        return ticketIds[_ownerAddress];
+    function getTicketIdsForAdmin(
+        address _adminAddress
+    ) external view returns (uint256[] memory) {
+        return ticketIds[_adminAddress];
     }
-
 }
