@@ -4,29 +4,50 @@ pragma solidity ^0.8.19;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "./TabbitTicket.sol";
+import "@openzeppelin/contracts/utils/Base64.sol";
 import "./interfaces/ITabbitPass.sol";
+import "./TabbitTicket.sol";
 
 contract TabbitPass is ITabbitPass, ERC721, Ownable, ReentrancyGuard {
-
     address public allowedContract;
     address public tabbitTicketAddress;
 
     uint256 public totalSupply;
 
-    string public baseImageURI = "https://tabbit.me/metadata/";
+    struct PassConfig {
+        string name;
+        string description;
+        string imageUri;
+        string website;
+    }
+
 
     /// @dev Ticket ID to Card ID
-    mapping (uint256 => uint256) public ticketIds;
+    mapping(uint256 => uint256) public ticketIds;
 
     /// @dev Ticket Owner Address to Card Image URI
-    mapping (address => string) public tokenURIs;
+    mapping(address => PassConfig) public passConfigs;
 
-    event minted(uint256);
+    constructor() ERC721("TabbitPass", "TPASS") {}
 
-    constructor() ERC721("TabbitCard", "TBCARD") {}
+    function createPass(
+        string memory _name,
+        string memory _description,
+        string memory _imageUri,
+        string memory _website
+    ) external {
+        passConfigs[msg.sender] = PassConfig({
+            name: _name,
+            description: _description,
+            imageUri: _imageUri,
+            website: _website
+        });
+    }
 
-    function mintCard(address _to, uint256 _ticketId) external nonReentrant onlyAllowedContract {
+    function mintCard(
+        address _to,
+        uint256 _ticketId
+    ) external nonReentrant onlyAllowedContract {
         _safeMint(_to, totalSupply);
         ticketIds[totalSupply] = _ticketId;
         totalSupply++;
@@ -37,31 +58,54 @@ contract TabbitPass is ITabbitPass, ERC721, Ownable, ReentrancyGuard {
     }
 
     modifier onlyAllowedContract() {
-        require(msg.sender == allowedContract, "Only allowed contract can call this function.");
+        require(
+            msg.sender == allowedContract,
+            "Only allowed contract can call this function."
+        );
         _;
     }
 
     modifier onlyCardAdmin(uint256 tokenId) {
-        require(getCardAdmin(tokenId) == tx.origin, "Only card admin can call this function.");
+        require(
+            getCardAdmin(tokenId) == tx.origin,
+            "Only card admin can call this function."
+        );
         _;
     }
 
     function getCardAdmin(uint256 tokenId) public view returns (address) {
-        return TabbitTicket(tabbitTicketAddress).getTicketAdmin(ticketIds[tokenId]);
-    }
-
-    function tokenURI(uint256 tokenId) public view override returns (string memory) {
-        return tokenURIs[getCardAdmin(tokenId)];
-    }
-
-    function setBaseURI(string memory _baseURI) external {
-        tokenURIs[msg.sender] = _baseURI;
+        return
+            TabbitTicket(tabbitTicketAddress).getTicketAdmin(
+                ticketIds[tokenId]
+            );
     }
 
     function getTotalSupply() external view returns (uint256) {
         return totalSupply;
     }
 
-    
+    function tokenURI(
+        uint256 tokenId
+    ) public view override returns (string memory) {
+        require(_exists(tokenId), "TabbitPass: Nonexistent token");
 
+        address adminAddress = getCardAdmin(tokenId);
+        return
+            string(
+                abi.encodePacked(
+                    "data:application/json;base64,",
+                    Base64.encode(
+                        bytes(
+                            abi.encodePacked(
+                                '{"name":"', passConfigs[adminAddress].name,
+                                '", "description": "', passConfigs[adminAddress].description,
+                                '", "external_url": "', passConfigs[adminAddress].website,
+                                '", "image" : "', passConfigs[adminAddress].imageUri,
+                                '}'
+                            )
+                        )
+                    )
+                )
+            );
+    }
 }
