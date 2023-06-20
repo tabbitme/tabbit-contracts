@@ -102,7 +102,7 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
     function _createTBA(uint256 cardId) internal {
         IERC6551Registry(registryAddress).createAccount(
             implementationAddress,
-            80001,
+            592,
             tabbitCardAddress,
             cardId,
             0,
@@ -164,7 +164,7 @@ contract TabbitTicket is ERC1155, Ownable, ReentrancyGuard {
         return
             IERC6551Registry(registryAddress).account(
                 implementationAddress,
-                80001,
+                592,
                 tabbitCardAddress,
                 cardId,
                 0
