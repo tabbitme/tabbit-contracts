@@ -9,7 +9,6 @@ import "./interfaces/ITabbitPass.sol";
 import "./TabbitTicket.sol";
 
 contract TabbitPass is ITabbitPass, ERC721, Ownable, ReentrancyGuard {
-    address public allowedContract;
     address public tabbitTicketAddress;
 
     uint256 public totalSupply;
@@ -54,12 +53,12 @@ contract TabbitPass is ITabbitPass, ERC721, Ownable, ReentrancyGuard {
     }
 
     function setAllowedContract(address _contractAddress) external onlyOwner {
-        allowedContract = _contractAddress;
+        tabbitTicketAddress = _contractAddress;
     }
 
     modifier onlyAllowedContract() {
         require(
-            msg.sender == allowedContract,
+            msg.sender == tabbitTicketAddress,
             "Only allowed contract can call this function."
         );
         _;
@@ -101,7 +100,7 @@ contract TabbitPass is ITabbitPass, ERC721, Ownable, ReentrancyGuard {
                                 '", "description": "', passConfigs[adminAddress].description,
                                 '", "external_url": "', passConfigs[adminAddress].website,
                                 '", "image" : "', passConfigs[adminAddress].imageUri,
-                                '}'
+                                '"}'
                             )
                         )
                     )
