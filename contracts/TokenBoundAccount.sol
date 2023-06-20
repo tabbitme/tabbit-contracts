@@ -34,9 +34,7 @@ contract TokenBoundAccount is Account, IERC6551Account {
     receive() external payable override(IERC6551Account, Account) {}
 
     /// @notice Returns whether a signer is authorized to perform transactions using the wallet.
-    function isValidSigner(
-        address _signer
-    ) public view returns (bool) {
+    function isValidSigner(address _signer) public view returns (bool) {
         return (owner() == _signer);
     }
 
