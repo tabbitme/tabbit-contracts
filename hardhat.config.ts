@@ -58,7 +58,7 @@ const config: any = {
       url: `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_ID}`,
     },
     mumbai: {
-      url:`https://matic-mumbai.chainstacklabs.com`,
+      url:`https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_ID}`,
       chainId:80001,
       gasPrice: 10000000000,
       accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
